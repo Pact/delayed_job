@@ -95,7 +95,8 @@ module Delayed
             @payload_object ||= YAML.load(self.handler)
           end
           warn "parse yaml"
-          puts "invoking perform again"
+          puts "invoking perform again #{@payload_object}"
+          return @payload_object
         rescue TypeError, LoadError, NameError, ArgumentError => e
           raise DeserializationError,
             "Job failed to load: #{e.message}. Handler: #{handler.inspect}"
@@ -112,8 +113,8 @@ module Delayed
             warn "invoking before - #{self.name}"
             puts "invoking before - #{self.name}"
             hook :before
-            warn "invoking perform - #{self.name}"
-            puts "invoking perform - #{self.name}"
+            warn "invoking perform - #{self.name} ------ #{@payload_object}"
+            puts "invoking perform - #{self.name} #{@payload_object}"
             payload_object.perform
             warn "done perform - #{self.name}"
             puts "done perform success - #{self.name}"
