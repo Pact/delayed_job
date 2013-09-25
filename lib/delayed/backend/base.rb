@@ -93,9 +93,13 @@ module Delayed
         else
           @payload_object ||= YAML.load(self.handler)
         end
+        warn "parse yaml - #{self.name}"
+        puts "invoking perform again - #{self.name}"
       rescue TypeError, LoadError, NameError, ArgumentError => e
         raise DeserializationError,
           "Job failed to load: #{e.message}. Handler: #{handler.inspect}"
+        warn "error? not sure - #{self.name}"
+        puts "error? not sure - #{self.name}"
       end
 
       def invoke_job
