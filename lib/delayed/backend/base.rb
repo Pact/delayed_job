@@ -106,7 +106,11 @@ module Delayed
             warn "invoking before - #{self.name}"
             puts "invoking before - #{self.name}"
             hook :before
+            warn "invoking perform - #{self.name}"
+            puts "invoking perform - #{self.name}"
             payload_object.perform
+            warn "done perform - #{self.name}"
+            puts "done perform success - #{self.name}"
             hook :success
           rescue Exception => e
             hook :error, e
