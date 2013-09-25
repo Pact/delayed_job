@@ -99,8 +99,12 @@ module Delayed
       end
 
       def invoke_job
+        warn "invoking job - #{self.name}"
+        puts "invoking job - #{self.name}"
         Delayed::Worker.lifecycle.run_callbacks(:invoke_job, self) do
           begin
+            warn "invoking before - #{self.name}"
+            puts "invoking before - #{self.name}"
             hook :before
             payload_object.perform
             hook :success
