@@ -100,8 +100,11 @@ module Delayed
         rescue TypeError, LoadError, NameError, ArgumentError => e
           raise DeserializationError,
             "Job failed to load: #{e.message}. Handler: #{handler.inspect}"
-          warn "error? not sure"
-          puts "error? not sure"
+          warn "error? DeserializationError"
+          puts "error? DeserializationError"
+        rescue Exception => e
+          warn "error? not sure #{e.message} ======"
+          puts "error? not sure #{e.message} ------"
         end
       end
 
@@ -120,6 +123,8 @@ module Delayed
             puts "done perform success - #{self.name}"
             hook :success
           rescue Exception => e
+            warn "Error condition - #{self.name}"
+            puts "Error condition - #{self.name}"
             hook :error, e
             raise e
           ensure
