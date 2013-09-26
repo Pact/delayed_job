@@ -123,8 +123,8 @@ module Delayed
             puts "done perform success - #{self.name}"
             hook :success
           rescue Exception => e
-            warn "Error condition - #{self.name}"
-            puts "Error condition - #{self.name}"
+            warn "Error condition - #{self.name} ----- #{e.message}"
+            puts "Error condition - #{self.name} ----- #{e.message}"
             hook :error, e
             raise e
           ensure
