@@ -86,16 +86,24 @@ module Delayed
       end
 
       def payload_object
-        if YAML.respond_to?(:unsafe_load)
-          #See https://github.com/dtao/safe_yaml
-          #When the method is there, we need to load our YAML like this...
-          @payload_object ||= YAML.load(self.handler, :safe => false)
-        else
-          @payload_object ||= YAML.load(self.handler)
+        begin
+          if YAML.respond_to?(:unsafe_load)
+            #See https://github.com/dtao/safe_yaml
+            #When the method is there, we need to load our YAML like this...
+            @payload_object ||= YAML.load(self.handler, :safe => false)
+          else
+            @payload_object ||= YAML.load(self.handler)
+          end
+          return @payload_object
+        rescue TypeError, LoadError, NameError, ArgumentError => e
+          raise DeserializationError,
+            "Job failed to load: #{e.message}. Handler: #{handler.inspect}"
+          warn "error? DeserializationError"
+          puts "error? DeserializationError"
+        rescue Exception => e
+          warn "error? not sure #{e.message} ======"
+          puts "error? not sure #{e.message} ------"
         end
-      rescue TypeError, LoadError, NameError, ArgumentError => e
-        raise DeserializationError,
-          "Job failed to load: #{e.message}. Handler: #{handler.inspect}"
       end
 
       def invoke_job

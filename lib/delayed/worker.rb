@@ -203,7 +203,10 @@ module Delayed
     def run(job)
       job_say job, 'RUNNING'
       runtime =  Benchmark.realtime do
-        Timeout.timeout(self.class.max_run_time.to_i, WorkerTimeout) { job.invoke_job }
+        Timeout.timeout(self.class.max_run_time.to_i, WorkerTimeout) { 
+          job_say job, 'ACTUALLY RUNNING ================================='
+          job.invoke_job 
+        }
         job.destroy
       end
       job_say job, 'COMPLETED after %.4f' % runtime
