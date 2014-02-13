@@ -94,8 +94,6 @@ module Delayed
           else
             @payload_object ||= YAML.load(self.handler)
           end
-          warn "parse yaml"
-          puts "invoking perform again #{@payload_object}"
           return @payload_object
         rescue TypeError, LoadError, NameError, ArgumentError => e
           raise DeserializationError,
@@ -109,22 +107,12 @@ module Delayed
       end
 
       def invoke_job
-        warn "invoking job - #{self.name}"
-        puts "invoking job - #{self.name}"
         Delayed::Worker.lifecycle.run_callbacks(:invoke_job, self) do
           begin
-            warn "invoking before - #{self.name}"
-            puts "invoking before - #{self.name}"
             hook :before
-            warn "invoking perform - #{self.name} ------ #{@payload_object}"
-            puts "invoking perform - #{self.name} #{@payload_object}"
             payload_object.perform
-            warn "done perform - #{self.name}"
-            puts "done perform success - #{self.name}"
             hook :success
           rescue Exception => e
-            warn "Error condition - #{self.name} ----- #{e.message}"
-            puts "Error condition - #{self.name} ----- #{e.message}"
             hook :error, e
             raise e
           ensure
