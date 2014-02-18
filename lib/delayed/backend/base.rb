@@ -93,22 +93,22 @@ module Delayed
         else
           @payload_object ||= YAML.load(self.handler)
         end
-      rescue TypeError, LoadError, NameError, ArgumentError => e
+      rescue TypeError, LoadError, NameError, ArgumentError, Psych::SyntaxError => e
         raise DeserializationError,
           "Job failed to load: #{e.message}. Handler: #{handler.inspect}"
       rescue Exception => e
-        puts e.class.to_s
+          puts e.class.to_s
       end
 
       def invoke_job
         Delayed::Worker.lifecycle.run_callbacks(:invoke_job, self) do
           begin
             hook :before
-            #if payload_object
+            if payload_object
               payload_object.perform
-            #else
-            #  raise "Failed to load payload_object."
-            #end
+            else
+              raise "Failed to load payload_object."
+            end
             hook :success
           rescue Exception => e
             hook :error, e
