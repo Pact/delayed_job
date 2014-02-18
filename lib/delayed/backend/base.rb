@@ -98,6 +98,7 @@ module Delayed
           "Job failed to load: #{e.message}. Handler: #{handler.inspect}"
       rescue Exception => e
           puts e.class.to_s
+          e.backtrace = "Backtrace removed (too long)."
       end
 
       def invoke_job
