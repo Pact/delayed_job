@@ -96,7 +96,7 @@ module Delayed
       rescue TypeError, LoadError, NameError, ArgumentError, SyntaxError => e
         raise DeserializationError,
           "Job failed to load: #{e.message}. Handler: #{handler.inspect}"
-      rescue Psych::SyntaxError => e #Catch Psych Syntax Errors separately.
+      rescue Psych::Error => e #Catch Psych Errors separately.
         puts e.class.to_s
         raise DeserializationError,
           "Job failed to load: #{e.message}. Handler: #{handler.inspect}"
