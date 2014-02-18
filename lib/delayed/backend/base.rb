@@ -93,12 +93,13 @@ module Delayed
         else
           @payload_object ||= YAML.load(self.handler)
         end
-      rescue TypeError, LoadError, NameError, ArgumentError, SyntaxError, Error => e
+      rescue TypeError, LoadError, NameError, ArgumentError, SyntaxError => e
         raise DeserializationError,
           "Job failed to load: #{e.message}. Handler: #{handler.inspect}"
-      rescue Exception => e
-          puts e.class.to_s
-          e.backtrace = "Backtrace removed (too long)."
+      rescue Psych::SyntaxError => e #Catch Psych Syntax Errors separately.
+        puts e.class.to_s
+        raise DeserializationError,
+          "Job failed to load: #{e.message}. Handler: #{handler.inspect}"
       end
 
       def invoke_job
