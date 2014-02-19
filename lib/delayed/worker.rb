@@ -238,7 +238,8 @@ module Delayed
     end
 
     def job_say(job, text, level = DEFAULT_LOG_LEVEL)
-      text = "Job #{job.name} (id=#{job.id}) #{text}"
+      job_name = job.name rescue "Gympact"
+      text = "Job #{job_name} (id=#{job.id}) #{text}"
       say text, level
     end
 
@@ -256,8 +257,7 @@ module Delayed
 
     def handle_failed_job(job, error)
       job.last_error = "#{error.message}\n#{error.backtrace.join("\n")}"
-      job_name = error.class.name rescue "Gympact Error"
-      job_say job, "FAILED (#{job.attempts} prior attempts) with #{job_name}: #{error.message}", Logger::ERROR
+      job_say job, "FAILED (#{job.attempts} prior attempts) with #{error.class.name}: #{error.message}", Logger::ERROR
       reschedule(job)
     end
 
