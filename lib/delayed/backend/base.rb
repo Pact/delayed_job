@@ -94,14 +94,8 @@ module Delayed
           @payload_object ||= YAML.load(self.handler)
         end
       rescue TypeError, LoadError, NameError, ArgumentError, Psych::SyntaxError => e
-        if handler.inspect.length + e.message.length > 215 #Check if handler + error message is too long.
-          puts handler.inspect, e.inspect
-          raise DeserializationError,
-            "Job failed to load: Error message and Handler ommitted, too long."
-        else
-          raise DeserializationError,
-            "Job failed to load: #{e.message}. Handler: #{handler.inspect}"
-        end
+        raise DeserializationError,
+          "Job failed to load: #{e.message}. Handler: #{handler.inspect}"
       end
 
       def invoke_job
@@ -111,9 +105,6 @@ module Delayed
             payload_object.perform
             hook :success
           rescue Exception => e
-            if e.inspect.to_s.length > 255
-              e.set_backtrace "Backtrace ommitted, too long."
-            end
             hook :error, e
             raise e
           ensure
