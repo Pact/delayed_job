@@ -250,8 +250,8 @@ module Delayed
     end
 
     def max_attempts(job)
-      max_attempts = job.max_attempts rescue "Gympact"
-      job.max_attempts || self.class.max_attempts
+      job_max_attempts = job.max_attempts rescue "Gympact"
+      job_max_attempts || self.class.max_attempts
     end
 
   protected
