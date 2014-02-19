@@ -209,11 +209,11 @@ module Delayed
       job_say job, 'COMPLETED after %.4f' % runtime
       return true  # did work
     rescue DeserializationError => error
-      #if "#{error.message}\n#{error.backtrace.join("\n")}".length > 255
+      if "#{error.message}\n#{error.backtrace.join("\n")}".length > 255
         job.last_error = "#{error.message}\n Backtrace ommitted (too long)."
-      #else
-      #  job.last_error = "#{error.message}\n#{error.backtrace.join("\n")}"
-      #end
+      else
+        job.last_error = "#{error.message}\n#{error.backtrace.join("\n")}"
+      end
       failed(job)
     rescue Exception => error
       self.class.lifecycle.run_callbacks(:error, self, job){ handle_failed_job(job, error) }
@@ -260,7 +260,7 @@ module Delayed
 
     def handle_failed_job(job, error)
       job.last_error = "#{error.message}\n#{error.backtrace.join("\n")}"
-      job_say job, "FAILED (#{job.attempts} prior attempts) with #{error.class.name}: #{error.message}", Logger::ERROR
+      job_say job, "FAAAAAAILED (#{job.attempts} prior attempts) with #{error.class.name}: #{error.message}", Logger::ERROR
       reschedule(job)
     end
 
