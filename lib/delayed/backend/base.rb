@@ -93,7 +93,7 @@ module Delayed
         else
           @payload_object ||= YAML.load(self.handler)
         end
-      rescue TypeError, LoadError, NameError, ArgumentError, Psych::SyntaxError => e
+      rescue TypeError, LoadError, NameError, ArgumentError => e
         if "Job failed to load: #{e.message}. Handler: #{handler.inspect}".length > 255
           raise DeserializationError,
             "Job failed to load. Error message and handler ommitted, too long."
@@ -101,8 +101,10 @@ module Delayed
           raise DeserializationError,
             "Job failed to load: #{e.message}. Handler: #{handler.inspect}"
         end
-      rescue Exception => e
+      rescue Psych::SyntaxError => e
           e.inspect
+          raise DeserializationError,
+            "Psych syntax error"
       end
 
       def invoke_job
