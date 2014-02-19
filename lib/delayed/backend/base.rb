@@ -107,7 +107,11 @@ module Delayed
         Delayed::Worker.lifecycle.run_callbacks(:invoke_job, self) do
           begin
             hook :before
-            payload_object.perform
+            if payload_object
+              payload_object.perform
+            else
+              raise "No payload_object loaded."
+            end
             hook :success
           rescue Exception => e
             hook :error, e
